@@ -64,7 +64,7 @@ class TwitchFollowedLiveStreamsCard extends HTMLElement
 
             const config_streams_vip = this.config.streams_vip !== undefined ? this.config.streams_vip : [];
             const config_streams_hide = this.config.streams_hide !== undefined ? this.config.streams_hide : [];
-            const config_streams_reduce_requests = this.config.streams_reduce_requests !== undefined ? this.config.streams_reduce_requests : false;
+            const config_streams_reduce_requests = this.config.streams_reduce_requests !== undefined ? this.config.streams_reduce_requests : true;
 
             let priviousStreamCount = 0;
             let currentUser = null;
@@ -77,12 +77,11 @@ class TwitchFollowedLiveStreamsCard extends HTMLElement
                 await getCurrentUser();
                 const streams = await getJson(const_url_get_user_streams + currentUser[0].id);
 
-                if(streams.length == priviousStreamCount || !config_streams_reduce_requests) {
+                if(streams.length == priviousStreamCount || streams.length == 0 || !config_streams_reduce_requests) {
                     return;
                 }
                 priviousStreamCount = streams.length;
 
-                // Get Streamers
                 const streamers = await getStreamers(streams);
                 printCount(streams.length);
                 await printStreams(streams, streamers);
@@ -156,7 +155,6 @@ class TwitchFollowedLiveStreamsCard extends HTMLElement
                     })
                     .then(resp => resp.json())
                     .then(json => {
-                        // console.log(JSON.stringify(json));:w
                         return JSON.parse(JSON.stringify(json.data));
                     });
                 return json_data;
