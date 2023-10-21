@@ -266,7 +266,7 @@ class TwitchFollowedLiveStreamsCard extends HTMLElement
             }
 
             if(config_global_debug) console.log("TwitchFollowedLiveStreamsCard: Loading streams...");
-            content.innerHTML = "Loading twitch streams...<br>";
+            content.innerHTML = "Loading twitch streams...<br><br>";
             main();
             if(!config_streams_disable_auto_refresh) {
                 setInterval(async () => {
@@ -289,8 +289,7 @@ class TwitchFollowedLiveStreamsCard extends HTMLElement
 customElements.define('twitch-followed-live-streams-card', TwitchFollowedLiveStreamsCard);
 
 /*
-
-Config
+# CONFIG
 
 GLOBAL
 global_debug
