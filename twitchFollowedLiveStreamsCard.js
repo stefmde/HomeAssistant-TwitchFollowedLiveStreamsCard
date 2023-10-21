@@ -89,51 +89,6 @@ class TwitchFollowedLiveStreamsCard extends HTMLElement
             }
 
             // ### Local Helpers
-            async function printStreams(streams, streamers) {
-                const streamsTable = document.createElement('table');
-                let skipped = 0;
-                for (let i = 0; i < streams.length && i < config_streams_limit_count + skipped; i++) {
-                    const stream = streams[i];
-                    const streamer = streamers.find(obj => {
-                        return obj.login === stream.user_login;
-                    });
-                    const streamContent = await printStream(stream, streamer);
-                    if(streamContent == null) {
-                        skipped++;
-                        continue;
-                    }
-                    streamsTable.innerHTML += streamContent;
-                }
-                if(config_global_debug) console.log("TwitchFollowedLiveStreamsCard: " + skipped + " twitch streams hidden due to the 'streams_hide' setting");
-
-                streamsDiv.innerHTML = streamsTable.outerHTML;
-                content.innerHTML += streamsDiv.outerHTML;
-            }
-
-            async function getStreamers(streams) {
-                let userQuery = "";
-                for (let i = 0; i < streams.length; i++) {
-                    userQuery += "login=" + streams[i].user_login + "&"
-                }
-                return await getJson(const_url_get_user + userQuery);
-            }
-
-            function printCount(streamsCount) {
-                if(config_streams_show_count) {
-                    streamsCountDiv.innerText = streamsCount + " streams live";
-                    streamsCountDiv.style.fontWeight = "bold";
-                    streamsCountDiv.style.fontSize = config_streams_font_size_count;
-                    streamsCountDiv.style.marginBottom = "0.7em";
-                    content.innerHTML = streamsCountDiv.outerHTML;
-                }
-            }
-
-            async function getCurrentUser() {
-                if(currentUser == null || !config_streams_reduce_requests) {
-                    currentUser = await getJson(const_url_get_user + "login=" + config_global_credentials_user_name);
-                }
-            }
-
             function checkRequiredProperties() {
                 if(config_global_credentials_user_name == null) {
                     console.error("TwitchFollowedLiveStreamsCard: Property 'global_credentials_user_name' is required and not set.");
@@ -159,6 +114,51 @@ class TwitchFollowedLiveStreamsCard extends HTMLElement
                         return JSON.parse(JSON.stringify(json.data));
                     });
                 return json_data;
+            }
+
+            async function getCurrentUser() {
+                if(currentUser == null || !config_streams_reduce_requests) {
+                    currentUser = await getJson(const_url_get_user + "login=" + config_global_credentials_user_name);
+                }
+            }
+
+            function printCount(streamsCount) {
+                if(config_streams_show_count) {
+                    streamsCountDiv.innerText = streamsCount + " streams live";
+                    streamsCountDiv.style.fontWeight = "bold";
+                    streamsCountDiv.style.fontSize = config_streams_font_size_count;
+                    streamsCountDiv.style.marginBottom = "0.7em";
+                    content.innerHTML = streamsCountDiv.outerHTML;
+                }
+            }
+
+            async function getStreamers(streams) {
+                let userQuery = "";
+                for (let i = 0; i < streams.length; i++) {
+                    userQuery += "login=" + streams[i].user_login + "&"
+                }
+                return await getJson(const_url_get_user + userQuery);
+            }
+
+            async function printStreams(streams, streamers) {
+                const streamsTable = document.createElement('table');
+                let skipped = 0;
+                for (let i = 0; i < streams.length && i < config_streams_limit_count + skipped; i++) {
+                    const stream = streams[i];
+                    const streamer = streamers.find(obj => {
+                        return obj.login === stream.user_login;
+                    });
+                    const streamContent = await printStream(stream, streamer);
+                    if(streamContent == null) {
+                        skipped++;
+                        continue;
+                    }
+                    streamsTable.innerHTML += streamContent;
+                }
+                if(config_global_debug) console.log("TwitchFollowedLiveStreamsCard: " + skipped + " twitch streams hidden due to the 'streams_hide' setting");
+
+                streamsDiv.innerHTML = streamsTable.outerHTML;
+                content.innerHTML += streamsDiv.outerHTML;
             }
 
             async function printStream(stream, streamer) {
@@ -266,7 +266,7 @@ class TwitchFollowedLiveStreamsCard extends HTMLElement
             }
 
             if(config_global_debug) console.log("TwitchFollowedLiveStreamsCard: Loading streams...");
-            content.innerText = "Loading twitch streams...";
+            content.innerHTML = "Loading twitch streams...<br>";
             main();
             if(!config_streams_disable_auto_refresh) {
                 setInterval(async () => {
