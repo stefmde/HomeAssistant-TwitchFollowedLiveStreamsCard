@@ -37,6 +37,7 @@ class TwitchFollowedLiveStreamsCard extends HTMLElement
             const config_global_credentials_user_name = this.config.global_credentials_user_name !== undefined ? this.config.global_credentials_user_name : null;
             const config_global_credentials_access_token = this.config.global_credentials_access_token !== undefined ? this.config.global_credentials_access_token : null;
             const config_global_credentials_client_id = this.config.global_credentials_client_id !== undefined ? this.config.global_credentials_client_id : null;
+            const config_global_debug = this.config.global_debug !== undefined ? this.config.global_debug : false;
 
             // Streams
             const config_streams_disable_auto_refresh = this.config.streams_disable_auto_refresh !== undefined ? this.config.streams_disable_auto_refresh : false;
@@ -103,7 +104,7 @@ class TwitchFollowedLiveStreamsCard extends HTMLElement
                     }
                     streamsTable.innerHTML += streamContent;
                 }
-                console.log("TwitchFollowedLiveStreamsCard: " + skipped + " twitch streams hidden due to the 'streams_hide' setting");
+                if(config_global_debug) console.log("TwitchFollowedLiveStreamsCard: " + skipped + " twitch streams hidden due to the 'streams_hide' setting");
 
                 streamsDiv.innerHTML = streamsTable.outerHTML;
                 content.innerHTML += streamsDiv.outerHTML;
@@ -123,7 +124,7 @@ class TwitchFollowedLiveStreamsCard extends HTMLElement
                     streamsCountDiv.style.fontWeight = "bold";
                     streamsCountDiv.style.fontSize = config_streams_font_size_count;
                     streamsCountDiv.style.marginBottom = "0.7em";
-                    content.innerHTML = streamsCountDiv.outerHTML
+                    content.innerHTML = streamsCountDiv.outerHTML;
                 }
             }
 
@@ -264,12 +265,12 @@ class TwitchFollowedLiveStreamsCard extends HTMLElement
                 return streamContainerTr.outerHTML;
             }
 
-            console.log("TwitchFollowedLiveStreamsCard: Loading streams...");
+            if(config_global_debug) console.log("TwitchFollowedLiveStreamsCard: Loading streams...");
             content.innerText = "Loading twitch streams...";
             main();
             if(!config_streams_disable_auto_refresh) {
                 setInterval(async () => {
-                    console.log("TwitchFollowedLiveStreamsCard: Reloading streams...");
+                    if(config_global_debug) console.log("TwitchFollowedLiveStreamsCard: Reloading streams...");
                     await main() 
                 }, config_global_update_interval_s);
             }
@@ -292,6 +293,7 @@ customElements.define('twitch-followed-live-streams-card', TwitchFollowedLiveStr
 Config
 
 GLOBAL
+global_debug
 global_update_interval_s
 global_credentials_user_name
 global_credentials_access_token
