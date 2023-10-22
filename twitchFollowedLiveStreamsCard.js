@@ -44,12 +44,12 @@ class TwitchFollowedLiveStreamsCard extends HTMLElement
             const config_streams_disable_auto_refresh = this.config.streams_disable_auto_refresh !== undefined ? this.config.streams_disable_auto_refresh : false;
             const config_streams_disable_click_to_view = this.config.streams_disable_click_to_view !== undefined ? this.config.streams_disable_click_to_view : false;
             const config_streams_limit_count = this.config.streams_limit_count !== undefined ? this.config.streams_limit_count : 100;
-            const config_streams_image_show = this.config.streams_image_show !== undefined ? this.config.streams_image_show : true;
+            const config_streams_show_image = this.config.streams_show_image !== undefined ? this.config.streams_show_image : true;
             const config_streams_image_type = this.config.streams_image_type !== undefined ? this.config.streams_image_type : "user";
             const config_streams_image_size_height = this.config.streams_image_size_height !== undefined ? this.config.streams_image_size_height : "4em";
             const config_streams_image_size_width = this.config.streams_image_size_width !== undefined ? this.config.streams_image_size_width : "3em";
-            const config_streams_vertical_spacing = this.config.streams_vertical_spacing !== undefined ? this.config.streams_vertical_spacing : "1em";
-            const config_streams_horivontal_spacing = this.config.streams_horivontal_spacing !== undefined ? this.config.streams_horivontal_spacing : "1em";
+            const config_streams_spacing_horivontal = this.config.streams_spacing_horivontal !== undefined ? this.config.streams_spacing_horivontal : "1em";
+            const config_streams_spacing_vertical = this.config.streams_spacing_vertical !== undefined ? this.config.streams_spacing_vertical : "1em";
             
             const config_streams_font_size_game = this.config.streams_font_size_game !== undefined ? this.config.streams_font_size_game : "0.8em";
             const config_streams_font_size_user_name = this.config.streams_font_size_user_name !== undefined ? this.config.streams_font_size_user_name : "1em";
@@ -178,15 +178,15 @@ class TwitchFollowedLiveStreamsCard extends HTMLElement
                 streamContainerTr.style.borderBottom = "solid 1px";
 
                 // Image
-                if(config_streams_image_show) {
+                if(config_streams_show_image) {
                     const streamImageTd = document.createElement('td');
                     streamImageTd.style.width = "100px!important";
-                    streamImageTd.style.paddingBottom = config_streams_vertical_spacing;
+                    streamImageTd.style.paddingBottom = config_streams_spacing_vertical;
                     
                     const streamImageTdImg = document.createElement('img');
                     streamImageTdImg.style.height = config_streams_image_size_height;
                     streamImageTdImg.style.width = config_streams_image_size_width;
-                    streamImageTdImg.style.paddingRight = config_streams_horivontal_spacing;
+                    streamImageTdImg.style.paddingRight = config_streams_spacing_horivontal;
 
                     if(config_streams_image_type === "user") {
                         streamImageTdImg.setAttribute("src", streamer.profile_image_url);
@@ -207,7 +207,7 @@ class TwitchFollowedLiveStreamsCard extends HTMLElement
                 const streamDetailsTd = document.createElement('td');
                 streamDetailsTd.style.marginLeft = "0.5em";
                 streamDetailsTd.style.marginTop = "0.5em";
-                streamDetailsTd.style.paddingBottom = config_streams_vertical_spacing;
+                streamDetailsTd.style.paddingBottom = config_streams_spacing_vertical;
 
                 if(config_streams_show_game) {
                     let streamDetailsGameNameDiv = document.createElement('div');
@@ -306,29 +306,29 @@ global_credentials_client_id
 global_show_header
 
 STREAMS
+streams_disable_auto_refresh
+streams_disable_click_to_view
+streams_font_size_game
+streams_font_size_title
+streams_font_size_user_name
+streams_font_size_viewers
+streams_hide
+streams_image_size_height
+streams_image_size_width
+streams_image_type
+streams_limit_count
+streams_padding_bottom_size
 streams_padding_left_size
 streams_padding_right_size
 streams_padding_top_size
-streams_padding_bottom_size
-streams_disable_auto_refresh
-streams_disable_click_to_view
-streams_limit_count
-streams_image_show
-streams_image_type
-streams_image_size_height
-streams_image_size_width
-streams_vertical_spacing
-streams_horivontal_spacing
-streams_font_size_game
-streams_font_size_user_name
-streams_font_size_viewers
-streams_font_size_title
-streams_title_height
+streams_reduce_requests
 streams_show_game
+streams_show_image
+streams_show_title
 streams_show_user_name
 streams_show_viewers
-streams_show_title
+streams_spacing_horivontal
+streams_spacing_vertical
+streams_title_height
 streams_vip
-streams_hide
-streams_reduce_requests
 */
