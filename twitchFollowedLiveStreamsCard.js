@@ -185,7 +185,7 @@ class TwitchFollowedLiveStreamsCard extends HTMLElement
                 streamsStandard = sortStreamsByViewerCount(streamsStandard);
                 const sortedStreams = vipStreams.concat(streamsStandard);
                 log("Sorted streams");
-                console.log(sortedStreams);
+                if(config_global_debug) console.log(sortedStreams);
                 return sortedStreams;
             }
 
