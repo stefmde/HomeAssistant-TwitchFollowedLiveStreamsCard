@@ -17,9 +17,10 @@ This card for HomeAssistant allows you to see all your favorite Twitch streamers
 | `global_credentials_access_token` | `string` | `null` | The AccessToken of your Twitch app. [See below on how to create one.](https://github.com/stefmde/HomeAssistant-TwitchFollowedLiveStreamsCard/tree/main#twitch-add-dev-app) Will break the card and log an error if empty or invalid. |
 | `global_credentials_client_id` | `string` | `null` | The ClientId of your Twitch app. [See below on how to create one.](https://github.com/stefmde/HomeAssistant-TwitchFollowedLiveStreamsCard/tree/main#twitch-add-dev-app) Will break the card and log an error if empty or invalid. |
 | `global_credentials_user_name` | `string` | `null` | Your Twitch username. Will break the card and log an error if empty or invalid. |
-| `global_debug` | `bool` | `false` | Can be set to `true` if you have problems to see more details in the console log |
-| `global_show_header` | `bool` | `true` | Shows the card header with the count if set to `true` |
-global_update_interval_s
+| `global_debug` | `bool` | `false` | Can be set to `true` if you have problems to see more details in the console log. |
+| `global_show_header` | `bool` | `true` | Shows the card header with the count if set to `true`. |
+| `global_update_interval_s` | `int` | `60` | The time in seconds used for the interval to update the streams displayed. |
+
 
 ### Streams
 
@@ -59,11 +60,11 @@ This information is needed for the `global_credentials_access_token` and `global
  3. Click `Add` on the top right.
  4. Provide the following values:
 	 4.1. Name: `HomeAssistant Live Streamers`. Or something you like.
-	 4.2. OAuth Redirect URLs: `https://my.home-assistant.io/redirect/devices/` 
+	 4.2. OAuth Redirect URLs: `https://my.home-assistant.io/redirect/devices/`
 	 4.3. Category: `Website Integration`
 5. Click `Create`
-6. Copy the `Client-ID` for the property `global_credentials_client_id`
-7. Copy or create the `Client-Secret` for the property  `global_credentials_access_token`
+6. Copy the `Client-ID` for the property `global_credentials_client_id`.
+7. Copy or create the `Client-Secret` for the property  `global_credentials_access_token`.
 8. Now you're set to use the integration.
 
 
@@ -117,9 +118,6 @@ This information is needed for the `global_credentials_access_token` and `global
     streams_vip:
       - Jnic
 
-  
-  
-  
-  
 
-### Debug
+## Debug
+You can use the property `global_debug` and set it to `true` to see more logs in the console.
