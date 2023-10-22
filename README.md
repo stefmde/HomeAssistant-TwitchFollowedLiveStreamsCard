@@ -1,11 +1,13 @@
 
 # Twitch Followed Live Streams Card for HomeAssistant
 
-  
+![Sample image to show the config](https://raw.githubusercontent.com/stefmde/HomeAssistant-TwitchFollowedLiveStreamsCard/main/img/basic_config.png)
+
+[![hacs_badge](https://img.shields.io/badge/HACS-Custom-orange.svg?style=for-the-badge)](https://github.com/custom-components/hacs)
+
 
 ## Description
 This card for HomeAssistant allows you to see all your favorite Twitch streamers who are currently live. You can heavily customize this card and show/hide information or set streams to ✭VIP or hidden.
-
   
 
 ## Properties
