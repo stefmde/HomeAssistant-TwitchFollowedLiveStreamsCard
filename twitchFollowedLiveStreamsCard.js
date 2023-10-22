@@ -11,16 +11,16 @@ class TwitchFollowedLiveStreamsCard extends HTMLElement
             // ##################################################
 
             // ### Global
-            this.content = document.createElement('div');
+            this.content = document.createElement("div");
             card.appendChild(this.content);
             this.appendChild(card);
             const content = this.content;
 
             // ### StreamsCount
-            const streamsCountDiv = document.createElement('div');
+            const streamsCountDiv = document.createElement("div");
 
             // ### Streams
-            const streamsDiv = document.createElement('div');
+            const streamsDiv = document.createElement("div");
             streamsDiv.style.overflow = "hidden";
             streamsDiv.style.paddingLeft = this.config.streams_padding_left_size !== undefined ? this.config.streams_padding_left_size : "1em";
             streamsDiv.style.paddingRight = this.config.streams_padding_right_size !== undefined ? this.config.streams_padding_right_size : "1em";
@@ -67,6 +67,7 @@ class TwitchFollowedLiveStreamsCard extends HTMLElement
             const config_streams_spacing_vertical = this.config.streams_spacing_vertical !== undefined ? this.config.streams_spacing_vertical : "1em";
             
             const config_streams_title_height = this.config.streams_title_height !== undefined ? this.config.streams_title_height : "1.2em";
+            const config_streams_viewers_visibility_percentage = this.config.streams_viewers_visibility_percentage !== undefined ? this.config.streams_viewers_visibility_percentage : "100%";
             const config_streams_vip = this.config.streams_vip !== undefined ? this.config.streams_vip : [];
 
 
@@ -250,25 +251,25 @@ class TwitchFollowedLiveStreamsCard extends HTMLElement
                 streamDetailsTd.style.paddingBottom = config_streams_spacing_vertical;
 
                 if(config_streams_show_game) {
-                    let streamDetailsGameNameDiv = document.createElement('div');
+                    let streamDetailsGameNameDiv = document.createElement("div");
                     streamDetailsGameNameDiv.style.fontSize = config_streams_font_size_game;
                     streamDetailsGameNameDiv.innerText = stream.game_name;
                     streamDetailsTd.innerHTML += streamDetailsGameNameDiv.outerHTML;
                 }
 
                 if(config_streams_show_user_name) {
-                    let streamDetailsUserNameDiv = document.createElement('div');
+                    let streamDetailsUserNameDiv = document.createElement("div");
                     streamDetailsUserNameDiv.style.fontWeight = "bold";
                     streamDetailsUserNameDiv.style.fontSize = config_streams_font_size_user_name;
 
                     if(stream.isVip) {
-                        let streamDetailsUserNameDivVipSpan = document.createElement('span');
+                        let streamDetailsUserNameDivVipSpan = document.createElement("span");
                         streamDetailsUserNameDivVipSpan.innerText = "✭ ";
                         streamDetailsUserNameDivVipSpan.style.color = "GoldenRod";
                         streamDetailsUserNameDiv.innerHTML = streamDetailsUserNameDivVipSpan.outerHTML;
                     }
 
-                    let streamDetailsUserNameDivUserNameSpan = document.createElement('span');
+                    let streamDetailsUserNameDivUserNameSpan = document.createElement("span");
                     streamDetailsUserNameDivUserNameSpan.innerText = stream.user_name;
                     streamDetailsUserNameDiv.innerHTML += streamDetailsUserNameDivUserNameSpan.outerHTML;
 
@@ -276,23 +277,23 @@ class TwitchFollowedLiveStreamsCard extends HTMLElement
                 }
 
                 if(config_streams_show_viewers) {
-                    const streamDetailsViewerCountDiv = document.createElement('div');
+                    const streamDetailsViewerCountDiv = document.createElement("div");
                     streamDetailsViewerCountDiv.style.fontSize = config_streams_font_size_viewers;
     
-                    const streamDetailsViewerCountDivIconSpan = document.createElement('span');
+                    const streamDetailsViewerCountDivIconSpan = document.createElement("span");
                     streamDetailsViewerCountDivIconSpan.style.color = "red";
                     streamDetailsViewerCountDivIconSpan.style.fontWeight = "bold";
                     streamDetailsViewerCountDivIconSpan.innerHTML = "●&nbsp;";
                     streamDetailsViewerCountDiv.innerHTML += streamDetailsViewerCountDivIconSpan.outerHTML;
     
-                    const streamDetailsViewerCountDivCountSpan = document.createElement('span');
-                    streamDetailsViewerCountDivCountSpan.innerText = stream.viewer_count + " viewers"; // TODO Dimm a little
+                    const streamDetailsViewerCountDivCountSpan = document.createElement("span");
+                    streamDetailsViewerCountDivCountSpan.innerHTML = dimTextAsSpan(stream.viewer_count + " viewers", config_streams_viewers_visibility_percentage);
                     streamDetailsViewerCountDiv.innerHTML += streamDetailsViewerCountDivCountSpan.outerHTML;
                     streamDetailsTd.innerHTML += streamDetailsViewerCountDiv.outerHTML;
                 }
 
                 if(config_streams_show_title) {
-                    const streamDetailsTitleDiv = document.createElement('div');
+                    const streamDetailsTitleDiv = document.createElement("div");
                     streamDetailsTitleDiv.style.height = config_streams_title_height;
                     streamDetailsTitleDiv.style.fontSize = config_streams_font_size_title;
                     streamDetailsTitleDiv.style.overflow = "hidden";
@@ -303,6 +304,15 @@ class TwitchFollowedLiveStreamsCard extends HTMLElement
                 streamContainerTr.innerHTML += streamDetailsTd.outerHTML;
 
                 return streamContainerTr.outerHTML;
+            }
+
+            function dimTextAsSpan(str, visibilityPercentage) {
+                const dimTextSpan = document.createElement("span");
+                const foregroundColor = getComputedStyle(document.documentElement).getPropertyValue('--primary-text-color');
+                const backgroundColor = getComputedStyle(document.documentElement).getPropertyValue('--primary-background-color');
+                dimTextSpan.innerHTML = str;
+                dimTextSpan.style.color = "color-mix(in srgb, " + foregroundColor + " " + visibilityPercentage + ", " + backgroundColor + ")";
+                return dimTextSpan.outerHTML;
             }
 
             function log(str) {
@@ -371,6 +381,7 @@ streams_show_image
 streams_show_title
 streams_show_user_name
 streams_show_viewers
+streams_show_viewers_visibility_percentage
 streams_show_vips_ontop
 streams_spacing_horivontal
 streams_spacing_vertical
