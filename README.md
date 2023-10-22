@@ -71,7 +71,7 @@ This information is needed for the `global_credentials_access_token` and `global
 
 ### My favorite
 
-![Sample image to show the config](https://raw.githubusercontent.com/stefmde/HomeAssistantSimpleDateTimeClockCard/0e3e401b2cac73182ac525d7ce33b88ce2107278/img/header.png)
+![Sample image to show the config](https://raw.githubusercontent.com/stefmde/HomeAssistant-TwitchFollowedLiveStreamsCard/main/img/favorite_config.png)
 
     type: custom:twitch-followed-live-streams-card
     global_debug: true
@@ -89,6 +89,7 @@ This information is needed for the `global_credentials_access_token` and `global
 
 
 ### Basic
+![Sample image to show the config](https://raw.githubusercontent.com/stefmde/HomeAssistant-TwitchFollowedLiveStreamsCard/main/img/basic_config.png)
 
     type: custom:twitch-followed-live-streams-card
     global_credentials_user_name: StefmDE
@@ -97,6 +98,7 @@ This information is needed for the `global_credentials_access_token` and `global
 
 
 ### Stream Image
+![Sample image to show the config](https://raw.githubusercontent.com/stefmde/HomeAssistant-TwitchFollowedLiveStreamsCard/main/img/stream_image_config.png)
 
     type: custom:twitch-followed-live-streams-card
     global_credentials_user_name: StefmDE
@@ -106,6 +108,7 @@ This information is needed for the `global_credentials_access_token` and `global
 
 
 ### VIPs
+![Sample image to show the config](https://raw.githubusercontent.com/stefmde/HomeAssistant-TwitchFollowedLiveStreamsCard/main/img/vips_config.png)
 
     type: custom:twitch-followed-live-streams-card
     global_credentials_user_name: StefmDE
