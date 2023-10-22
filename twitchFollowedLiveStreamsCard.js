@@ -323,7 +323,7 @@ class TwitchFollowedLiveStreamsCard extends HTMLElement
                 }
             }
 
-            init();            
+            init();
         }
     }
 
