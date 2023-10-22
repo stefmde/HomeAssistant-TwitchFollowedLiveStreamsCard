@@ -72,6 +72,8 @@ This information is needed for the `global_credentials_access_token` and `global
 
 
 ## Samples
+Here are some sample configs to show you some possible configurations and help you find your config. The samples only shows the properties which are required or different from the default values. All the properties can be found [here.](https://github.com/stefmde/HomeAssistant-TwitchFollowedLiveStreamsCard/tree/main#properties)
+
 
 ### My favorite
 
