@@ -14,12 +14,12 @@ This card for HomeAssistant allows you to see all your favorite Twitch streamers
 
 | Name | Type | Default | Description |
 |--|--|--|--|
-| `global_credentials_access_token` | `string` | `null` | The AccessToken of your Twitch app. See below on how to create one. Will break the card and log an error if empty or invalid. |
-| `global_credentials_client_id` | `string` | `null` | The ClientId of your Twitch app. See below on how to create one. Will break the card and log an error if empty or invalid. |
+| `global_credentials_access_token` | `string` | `null` | The AccessToken of your Twitch app. [See below on how to create one.](https://github.com/stefmde/HomeAssistant-TwitchFollowedLiveStreamsCard/tree/main#twitch-add-dev-app) Will break the card and log an error if empty or invalid. |
+| `global_credentials_client_id` | `string` | `null` | The ClientId of your Twitch app. [See below on how to create one.](https://github.com/stefmde/HomeAssistant-TwitchFollowedLiveStreamsCard/tree/main#twitch-add-dev-app) Will break the card and log an error if empty or invalid. |
 | `global_credentials_user_name` | `string` | `null` | Your Twitch username. Will break the card and log an error if empty or invalid. |
 | `global_debug` | `bool` | `false` | Can be set to `true` if you have problems to see more details in the console log |
 | `global_show_header` | `bool` | `true` | Shows the card header with the count if set to `true` |
-
+global_update_interval_s
 
 ### Streams
 
@@ -73,15 +73,46 @@ This information is needed for the `global_credentials_access_token` and `global
 
 ![Sample image to show the config](https://raw.githubusercontent.com/stefmde/HomeAssistantSimpleDateTimeClockCard/0e3e401b2cac73182ac525d7ce33b88ce2107278/img/header.png)
 
-  
+    type: custom:twitch-followed-live-streams-card
+    global_debug: true
+    global_credentials_user_name: StefmDE
+    global_credentials_access_token: sFGFNMmD6ELCMhtFMzZcvb4nNyWx
+    global_credentials_client_id: k9eyo9vxpjghwQ6XsYNxJBPBdGtH
+    streams_limit_count: 8
+    streams_image_show: false
+    streams_show_viewers: false
+    streams_show_title: false
+    streams_vip:
+      - Wirtual
+      - Scrapie
+      - Jnic
 
-type: custom:simple-date-time-clock-card
 
-time_seconds_visibility_percentage: 30%
+### Basic
 
-time_seconds_font_size: 0.5em
+    type: custom:twitch-followed-live-streams-card
+    global_credentials_user_name: StefmDE
+    global_credentials_access_token: sFGFNMmD6ELCMhtFMzZcvb4nNyWx
+    global_credentials_client_id: k9eyo9vxpjghwQ6XsYNxJBPBdGtH
 
-date_week_number_show: true
+
+### Stream Image
+
+    type: custom:twitch-followed-live-streams-card
+    global_credentials_user_name: StefmDE
+    global_credentials_access_token: sFGFNMmD6ELCMhtFMzZcvb4nNyWx
+    global_credentials_client_id: k9eyo9vxpjghwQ6XsYNxJBPBdGtH
+    streams_image_type: stream
+
+
+### VIPs
+
+    type: custom:twitch-followed-live-streams-card
+    global_credentials_user_name: StefmDE
+    global_credentials_access_token: sFGFNMmD6ELCMhtFMzZcvb4nNyWx
+    global_credentials_client_id: k9eyo9vxpjghwQ6XsYNxJBPBdGtH
+    streams_vip:
+      - Jnic
 
   
   
