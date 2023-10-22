@@ -7,7 +7,7 @@
 
 
 ## Description
-This card for HomeAssistant allows you to see all your favorite Twitch streamers who are currently live. You can heavily customize this card and show/hide information or set streams to ✭VIP or hidden.
+This card for HomeAssistant allows you to see all your favorite Twitch streamers who are currently live. You can heavily customize this card and show/hide information or set streams to ✭VIP or hidden with its more that 30 properties.
   
 
 ## Properties
