@@ -38,7 +38,7 @@ This card for HomeAssistant allows you to see all your favorite Twitch streamers
 | `streams_image_size_height` | `string` | `4em` | Sets the size of the image. |
 | `streams_image_size_width` | `string` | `3em` | Sets the size of the image. |
 | `streams_image_type` | `string` | `user` | Values can be `user` and `stream`. The first one will be the profile picture of the user/streamer and the second one a screenshot of the stream. See `streams_show_image` to hide it |
-| `streams_limit_count` | `int` | `100` | Can be used to limit the number of streams that will be displayed. Values can be between `1` and `100`. |
+| `streams_limit_count` | `int` | `100` | Can be used to limit the number of streams that will be displayed. Values can be between `0` and `100`. |
 | `streams_padding_bottom_size` | `string` | `0em` | Sets the paddings of the steams. |
 | `streams_padding_left_size` | `string` | `1em` | Sets the paddings of the steams. |
 | `streams_padding_right_size` | `string` | `1em` | Sets the paddings of the steams. |
@@ -120,6 +120,17 @@ This information is needed for the `global_credentials_access_token` and `global
     global_credentials_client_id: k9eyo9vxpjghwQ6XsYNxJBPBdGtH
     streams_vip:
       - Jnic
+
+
+### Headder only
+![Sample image to show the config](https://raw.githubusercontent.com/stefmde/HomeAssistant-TwitchFollowedLiveStreamsCard/main/img/header_only_config.png)
+
+    type: custom:twitch-followed-live-streams-card
+    global_credentials_user_name: StefmDE
+    global_credentials_access_token: sFGFNMmD6ELCMhtFMzZcvb4nNyWx
+    global_credentials_client_id: k9eyo9vxpjghwQ6XsYNxJBPBdGtH
+    streams_limit_count: 0
+    streams_padding_bottom_size: 0.5em
 
 
 ## Debug
