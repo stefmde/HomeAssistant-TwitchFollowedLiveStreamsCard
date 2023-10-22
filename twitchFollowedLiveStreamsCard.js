@@ -212,7 +212,7 @@ class TwitchFollowedLiveStreamsCard extends HTMLElement
             async function printStream(stream, streamer) {
                 const streamContainerTr = document.createElement('tr');
                 if(!config_streams_disable_click_to_view) {
-                    streamContainerTr.setAttribute("onClick", "window.open('https://www.twitch.tv/'" + stream.user_login + ")");
+                    streamContainerTr.setAttribute("onClick", "window.open('https://www.twitch.tv/" + stream.user_login + "')");
                     streamContainerTr.style.cursor = "pointer";
                 }
                 streamContainerTr.style.marginTop = "1.2em!important";
@@ -264,8 +264,8 @@ class TwitchFollowedLiveStreamsCard extends HTMLElement
 
                     if(stream.isVip) {
                         let streamDetailsUserNameDivVipSpan = document.createElement("span");
-                        streamDetailsUserNameDivVipSpan.innerText = "✭ ";
-                        streamDetailsUserNameDivVipSpan.style.color = "GoldenRod";
+                        streamDetailsUserNameDivVipSpan.innerHTML = "✭&nbsp;";
+                        streamDetailsUserNameDivVipSpan.style.color = getColorFromTemplate("--primary-color");
                         streamDetailsUserNameDiv.innerHTML = streamDetailsUserNameDivVipSpan.outerHTML;
                     }
 
@@ -306,13 +306,21 @@ class TwitchFollowedLiveStreamsCard extends HTMLElement
                 return streamContainerTr.outerHTML;
             }
 
+            function dimColor(foregroundColor, backgroundColor, visibilityPercentage) {
+                return "color-mix(in srgb, " + foregroundColor + " " + visibilityPercentage + ", " + backgroundColor + ")";
+            }
+
             function dimTextAsSpan(str, visibilityPercentage) {
                 const dimTextSpan = document.createElement("span");
-                const foregroundColor = getComputedStyle(document.documentElement).getPropertyValue('--primary-text-color');
-                const backgroundColor = getComputedStyle(document.documentElement).getPropertyValue('--primary-background-color');
+                const foregroundColor = getColorFromTemplate("--primary-text-color");
+                const backgroundColor = getColorFromTemplate("--primary-background-color");
                 dimTextSpan.innerHTML = str;
-                dimTextSpan.style.color = "color-mix(in srgb, " + foregroundColor + " " + visibilityPercentage + ", " + backgroundColor + ")";
+                dimTextSpan.style.color = dimColor(foregroundColor, backgroundColor, visibilityPercentage);
                 return dimTextSpan.outerHTML;
+            }
+            
+            function getColorFromTemplate(varName) {
+                return getComputedStyle(document.documentElement).getPropertyValue(varName);
             }
 
             function log(str) {

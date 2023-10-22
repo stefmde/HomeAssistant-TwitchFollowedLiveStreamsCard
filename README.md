@@ -54,7 +54,7 @@ This card for HomeAssistant allows you to see all your favorite Twitch streamers
 | `streams_spacing_vertical` | `string` | `1em` | The spacing between the streams. |
 | `streams_title_height` | `string` | `1.2em` | The height that is given to the stream title to cap its possible excessive length. |
 | `streams_viewers_visibility_percentage` | `string` | `100%` | Can dim the viewer count. `100%` maximum visible `0%` not visible. To disable the viewers see `streams_show_viewers` |
-| `streams_vip` | `list` | `EMPTY` | Will show a golden `✭` in front of the user name of the streamer to mark it as an VIP/favorite. |
+| `streams_vip` | `list` | `EMPTY` | Will show a `✭` in front of the user name of the streamer to mark it as an VIP/favorite. |
 
 
 ## Twitch add dev app
@@ -81,7 +81,6 @@ Here are some sample configs to show you some possible configurations and help y
 ![Sample image to show the config](https://raw.githubusercontent.com/stefmde/HomeAssistant-TwitchFollowedLiveStreamsCard/main/img/favorite_config.png)
 
     type: custom:twitch-followed-live-streams-card
-    global_debug: true
     global_credentials_user_name: StefmDE
     global_credentials_access_token: sFGFNMmD6ELCMhtFMzZcvb4nNyWx
     global_credentials_client_id: k9eyo9vxpjghwQ6XsYNxJBPBdGtH
@@ -90,9 +89,7 @@ Here are some sample configs to show you some possible configurations and help y
     streams_show_viewers: false
     streams_show_title: false
     streams_vip:
-      - Wirtual
-      - Scrapie
-      - Jnic
+      - MissMikkaa
 
 
 ### Basic
@@ -122,7 +119,7 @@ Here are some sample configs to show you some possible configurations and help y
     global_credentials_access_token: sFGFNMmD6ELCMhtFMzZcvb4nNyWx
     global_credentials_client_id: k9eyo9vxpjghwQ6XsYNxJBPBdGtH
     streams_vip:
-      - Jnic
+      - MissMikkaa
 
 
 ### Headder only
