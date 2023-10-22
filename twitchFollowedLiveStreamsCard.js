@@ -180,7 +180,6 @@ class TwitchFollowedLiveStreamsCard extends HTMLElement
                 // Image
                 if(config_streams_image_show) {
                     const streamImageTd = document.createElement('td');
-                    streamImageTd.classList.add("col-3");
                     streamImageTd.style.width = "100px!important";
                     streamImageTd.style.paddingBottom = config_streams_vertical_spacing;
                     
