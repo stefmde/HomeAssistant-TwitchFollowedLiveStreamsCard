@@ -49,6 +49,7 @@ This card for HomeAssistant allows you to see all your favorite Twitch streamers
 | `streams_show_title` | `bool` | `true` | Shows or hides the title of the stream. The title could be really long. See `streams_title_height` to address that problem. |
 | `streams_show_user_name` | `bool` | `true` | Shows or hides the username of the streamer. May always be shown. |
 | `streams_show_viewers` | `bool` | `true` | Shows or hides the count of the viewers. |
+| `streams_show_vips_ontop` | `bool` | `true` | Shows the VIPs ontop. |
 | `streams_spacing_horivontal` | `string` | `1em` | The spacing between the images and the details of the stream. |
 | `streams_spacing_vertical` | `string` | `1em` | The spacing between the streams. |
 | `streams_title_height` | `string` | `1.2em` | The height that is given to the stream title to cap its possible excessive length. |

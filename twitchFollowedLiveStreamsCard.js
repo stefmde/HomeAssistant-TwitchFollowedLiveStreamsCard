@@ -33,38 +33,42 @@ class TwitchFollowedLiveStreamsCard extends HTMLElement
 
             // ### Get Config
             // Global
-            const config_global_update_interval_s = this.config.global_update_interval_s !== undefined ? this.config.global_update_interval_s * 1000 : 60 * 1000;
-            const config_global_credentials_user_name = this.config.global_credentials_user_name !== undefined ? this.config.global_credentials_user_name : null;
             const config_global_credentials_access_token = this.config.global_credentials_access_token !== undefined ? this.config.global_credentials_access_token : null;
             const config_global_credentials_client_id = this.config.global_credentials_client_id !== undefined ? this.config.global_credentials_client_id : null;
+            const config_global_credentials_user_name = this.config.global_credentials_user_name !== undefined ? this.config.global_credentials_user_name : null;
             const config_global_debug = this.config.global_debug !== undefined ? this.config.global_debug : false;
             const config_global_show_header = this.config.global_show_header !== undefined ? this.config.global_show_header : true;
+            const config_global_update_interval_s = this.config.global_update_interval_s !== undefined ? this.config.global_update_interval_s * 1000 : 60 * 1000;
 
             // Streams
             const config_streams_disable_auto_refresh = this.config.streams_disable_auto_refresh !== undefined ? this.config.streams_disable_auto_refresh : false;
             const config_streams_disable_click_to_view = this.config.streams_disable_click_to_view !== undefined ? this.config.streams_disable_click_to_view : false;
-            const config_streams_limit_count = this.config.streams_limit_count !== undefined ? this.config.streams_limit_count : 100;
-            const config_streams_show_image = this.config.streams_show_image !== undefined ? this.config.streams_show_image : true;
-            const config_streams_image_type = this.config.streams_image_type !== undefined ? this.config.streams_image_type : "user";
+            
+            const config_streams_font_size_game = this.config.streams_font_size_game !== undefined ? this.config.streams_font_size_game : "0.8em";
+            const config_streams_font_size_title = this.config.streams_font_size_title !== undefined ? this.config.streams_font_size_title : "1em";
+            const config_streams_font_size_user_name = this.config.streams_font_size_user_name !== undefined ? this.config.streams_font_size_user_name : "1em";
+            const config_streams_font_size_viewers = this.config.streams_font_size_viewers !== undefined ? this.config.streams_font_size_viwers : "0.8em";
+            
+            const config_streams_hide = this.config.streams_hide !== undefined ? this.config.streams_hide : [];
             const config_streams_image_size_height = this.config.streams_image_size_height !== undefined ? this.config.streams_image_size_height : "4em";
             const config_streams_image_size_width = this.config.streams_image_size_width !== undefined ? this.config.streams_image_size_width : "3em";
+            const config_streams_image_type = this.config.streams_image_type !== undefined ? this.config.streams_image_type : "user";
+            const config_streams_limit_count = this.config.streams_limit_count !== undefined ? this.config.streams_limit_count : 100;
+            const config_streams_reduce_requests = this.config.streams_reduce_requests !== undefined ? this.config.streams_reduce_requests : true;
+            
+            const config_streams_show_game = this.config.streams_show_game !== undefined ? this.config.streams_show_game : true;
+            const config_streams_show_image = this.config.streams_show_image !== undefined ? this.config.streams_show_image : true;
+            const config_streams_show_title = this.config.streams_show_title !== undefined ? this.config.streams_show_title : true;
+            const config_streams_show_user_name = this.config.streams_show_user_name !== undefined ? this.config.streams_show_user_name : true;
+            const config_streams_show_viewers = this.config.streams_show_viewers !== undefined ? this.config.streams_show_viewers : true;
+            const config_streams_show_vips_ontop = this.config.streams_show_vips_ontop !== undefined ? this.config.streams_show_vips_ontop : true;
+            
             const config_streams_spacing_horivontal = this.config.streams_spacing_horivontal !== undefined ? this.config.streams_spacing_horivontal : "1em";
             const config_streams_spacing_vertical = this.config.streams_spacing_vertical !== undefined ? this.config.streams_spacing_vertical : "1em";
             
-            const config_streams_font_size_game = this.config.streams_font_size_game !== undefined ? this.config.streams_font_size_game : "0.8em";
-            const config_streams_font_size_user_name = this.config.streams_font_size_user_name !== undefined ? this.config.streams_font_size_user_name : "1em";
-            const config_streams_font_size_viewers = this.config.streams_font_size_viewers !== undefined ? this.config.streams_font_size_viwers : "0.8em";
-            const config_streams_font_size_title = this.config.streams_font_size_title !== undefined ? this.config.streams_font_size_title : "1em";
             const config_streams_title_height = this.config.streams_title_height !== undefined ? this.config.streams_title_height : "1.2em";
-            
-            const config_streams_show_game = this.config.streams_show_game !== undefined ? this.config.streams_show_game : true;
-            const config_streams_show_user_name = this.config.streams_show_user_name !== undefined ? this.config.streams_show_user_name : true;
-            const config_streams_show_viewers = this.config.streams_show_viewers !== undefined ? this.config.streams_show_viewers : true;
-            const config_streams_show_title = this.config.streams_show_title !== undefined ? this.config.streams_show_title : true;
-
             const config_streams_vip = this.config.streams_vip !== undefined ? this.config.streams_vip : [];
-            const config_streams_hide = this.config.streams_hide !== undefined ? this.config.streams_hide : [];
-            const config_streams_reduce_requests = this.config.streams_reduce_requests !== undefined ? this.config.streams_reduce_requests : true;
+
 
             let priviousStreamCount = 0;
             let currentUser = null;
@@ -75,14 +79,14 @@ class TwitchFollowedLiveStreamsCard extends HTMLElement
             {
                 checkRequiredProperties();
                 await getCurrentUser();
-                const streams = await getJson(const_url_get_user_streams + currentUser[0].id);
-
+                let streams = await getJson(const_url_get_user_streams + currentUser[0].id);
                 if(streams.length == priviousStreamCount || streams.length == 0 || !config_streams_reduce_requests) {
                     return;
                 }
                 priviousStreamCount = streams.length;
 
                 const streamers = await getStreamers(streams);
+                streams = sortStreams(streams, streamers);
                 printHeader(streams.length);
                 await printStreams(streams, streamers);
                 content.style.padding = "0em";
@@ -102,6 +106,7 @@ class TwitchFollowedLiveStreamsCard extends HTMLElement
             }
 
             async function getJson(url) {
+                log("Get json from url '" + url + "'");
                 let json_data = await fetch(url, {
                     headers: {
                         Accept: 'application/json',
@@ -111,6 +116,10 @@ class TwitchFollowedLiveStreamsCard extends HTMLElement
                     })
                     .then(resp => resp.json())
                     .then(json => {
+                        log("Json result raw:");
+                        if(config_global_debug) console.log(json);
+                        log("Json result processed:");
+                        if(config_global_debug) console.log(JSON.parse(JSON.stringify(json.data)));
                         return JSON.parse(JSON.stringify(json.data));
                     });
                 return json_data;
@@ -141,34 +150,65 @@ class TwitchFollowedLiveStreamsCard extends HTMLElement
                 return await getJson(const_url_get_user + userQuery);
             }
 
-            async function printStreams(streams, streamers) {
-                const streamsTable = document.createElement('table');
+            function getStreamer(streamers, user_login) {
+                return streamers.find(obj => {
+                    return obj.login === user_login;
+                });
+            }
+
+            function sortStreams(streams, streamers) {
+                let vipStreams = [];
+                let streamsStandard = [];
                 let skipped = 0;
-                for (let i = 0; i < streams.length && i < config_streams_limit_count + skipped; i++) {
-                    const stream = streams[i];
+
+                streams.forEach((stream, index, arr) => {
                     const streamer = streamers.find(obj => {
                         return obj.login === stream.user_login;
                     });
-                    const streamContent = await printStream(stream, streamer);
-                    if(streamContent == null) {
-                        skipped++;
-                        continue;
+
+                    if(config_streams_vip.length > 0 && config_streams_show_vips_ontop && config_streams_vip.some((x) => x.toString().toLowerCase() == streamer.login)) {
+                        stream.isVip = true;
+                        vipStreams.push(stream);
+                        return;
                     }
+
+                    if(config_streams_hide.length > 0 && config_streams_hide.some((x) => x.toString().toLowerCase() == streamer.login)) {
+                        skipped++;
+                        return;
+                    }
+
+                    streamsStandard.push(stream);
+                });
+
+                log(skipped + " twitch streams hidden due to the 'streams_hide' setting");
+                vipStreams = sortStreamsByViewerCount(vipStreams);
+                streamsStandard = sortStreamsByViewerCount(streamsStandard);
+                const sortedStreams = vipStreams.concat(streamsStandard);
+                log("Sorted streams");
+                console.log(sortedStreams);
+                return sortedStreams;
+            }
+
+            function sortStreamsByViewerCount(streams) {
+                return streams.sort(function(a, b) {
+                    return a.viewer_counta - b.viewer_counta;
+                  });
+            }
+
+            async function printStreams(streams, streamers) {
+                const streamsTable = document.createElement('table');
+                for (let i = 0; i < streams.length && i < config_streams_limit_count; i++) {
+                    const stream = streams[i];
+                    const streamer = getStreamer(streamers, stream.user_login);
+                    const streamContent = await printStream(stream, streamer);
                     streamsTable.innerHTML += streamContent;
                 }
-                if(config_global_debug) console.log("TwitchFollowedLiveStreamsCard: " + skipped + " twitch streams hidden due to the 'streams_hide' setting");
 
                 streamsDiv.innerHTML = streamsTable.outerHTML;
                 content.innerHTML += streamsDiv.outerHTML;
             }
 
             async function printStream(stream, streamer) {
-                const isVip = config_streams_vip.length > 0 && config_streams_vip.some((x) => x.toString().toLowerCase() == streamer.login);
-                const isHidden = config_streams_hide.length > 0 && config_streams_hide.some((x) => x.toString().toLowerCase() == streamer.login);
-                if(isHidden && !isVip) {
-                    return null;
-                }
-                
                 const streamContainerTr = document.createElement('tr');
                 if(!config_streams_disable_click_to_view) {
                     streamContainerTr.setAttribute("onClick", "window.open('https://www.twitch.tv/'" + stream.user_login + ")");
@@ -221,7 +261,7 @@ class TwitchFollowedLiveStreamsCard extends HTMLElement
                     streamDetailsUserNameDiv.style.fontWeight = "bold";
                     streamDetailsUserNameDiv.style.fontSize = config_streams_font_size_user_name;
 
-                    if(isVip) {
+                    if(stream.isVip) {
                         let streamDetailsUserNameDivVipSpan = document.createElement('span');
                         streamDetailsUserNameDivVipSpan.innerText = "✭ ";
                         streamDetailsUserNameDivVipSpan.style.color = "GoldenRod";
@@ -265,15 +305,19 @@ class TwitchFollowedLiveStreamsCard extends HTMLElement
                 return streamContainerTr.outerHTML;
             }
 
+            function log(str) {
+                if(config_global_debug) console.log("TwitchFollowedLiveStreamsCard: " + str);
+            }
+
             async function init() {
-                if(config_global_debug) console.log("TwitchFollowedLiveStreamsCard: Loading streams...");
+                log("Loading streams...");
             
                 content.innerHTML = "Loading twitch streams...<br><br>";
                 content.style.padding = "1em";
                 main();
                 if(!config_streams_disable_auto_refresh) {
                     setInterval(async () => {
-                        if(config_global_debug) console.log("TwitchFollowedLiveStreamsCard: Reloading streams...");
+                        log("Reloading streams...");
                         await main() 
                     }, config_global_update_interval_s);
                 }
@@ -327,6 +371,7 @@ streams_show_image
 streams_show_title
 streams_show_user_name
 streams_show_viewers
+streams_show_vips_ontop
 streams_spacing_horivontal
 streams_spacing_vertical
 streams_title_height
