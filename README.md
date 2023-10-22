@@ -53,7 +53,18 @@ This card for HomeAssistant allows you to see all your favorite Twitch streamers
 
 
 ## Twitch add dev app
-https://dev.twitch.tv/console/apps
+This information is needed for the `global_credentials_access_token` and `global_credentials_client_id` property.
+ 1. Login to your twitch account here: https://twitch.tv
+ 2. Navigate to the developers console here: https://dev.twitch.tv/console/apps
+ 3. Click `Add` on the top right.
+ 4. Provide the following values:
+	 4.1. Name: `HomeAssistant Live Streamers`. Or something you like.
+	 4.2. OAuth Redirect URLs: `https://my.home-assistant.io/redirect/devices/` 
+	 4.3. Category: `Website Integration`
+5. Click `Create`
+6. Copy the `Client-ID` for the property `global_credentials_client_id`
+7. Copy or create the `Client-Secret` for the property  `global_credentials_access_token`
+8. Now you're set to use the integration.
 
 
 ## Samples
