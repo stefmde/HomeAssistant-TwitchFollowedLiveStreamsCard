@@ -121,3 +121,4 @@ This information is needed for the `global_credentials_access_token` and `global
 
 ## Debug
 You can use the property `global_debug` and set it to `true` to see more logs in the console.
+If the Integration isn't working check the properties `global_credentials_access_token` and `global_credentials_client_id` to be correctly set matching the [App](https://github.com/stefmde/HomeAssistant-TwitchFollowedLiveStreamsCard/tree/main#twitch-add-dev-app) you created.
