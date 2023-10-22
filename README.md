@@ -25,31 +25,31 @@ This card for HomeAssistant allows you to see all your favorite Twitch streamers
 
 | Name | Type | Default | Description |
 |--|--|--|--|
-| `streams_disable_auto_refresh` | `bool` | `false` |  |
-| `streams_disable_click_to_view` | `bool` | `false` |  |
-| `streams_font_size_game` | `string` | `0.8em` |  |
-| `streams_font_size_title` | `string` | `1em` |  |
-| `streams_font_size_user_name` | `string` | `1em` |  |
-| `streams_font_size_viewers` | `string` | `0.8em` |  |
-| `streams_hide` | `list` | `EMPTY` |  |
-| `streams_image_size_height` | `string` | `4em` |  |
-| `streams_image_size_width` | `string` | `3em` |  |
-| `streams_image_type` | `string` | `user` | Values can be `user` and `stream`. The first one will be the profile picture of the user/streamer and the second one a screenshot of the stream. |
+| `streams_disable_auto_refresh` | `bool` | `false` | Disables auto refreshing the streams if set to `true`. Can be useful if you want to refresh it manually. |
+| `streams_disable_click_to_view` | `bool` | `false` | Disables the behavior to open the stream in a new tab if set to `true`. |
+| `streams_font_size_game` | `string` | `0.8em` | Sets the font size of the game name. |
+| `streams_font_size_title` | `string` | `1em` | Sets the font size of the stream title. |
+| `streams_font_size_user_name` | `string` | `1em` | Sets the font size of the user name of the streamer. |
+| `streams_font_size_viewers` | `string` | `0.8em` | Sets the font size of the viewer count. |
+| `streams_hide` | `list` | `EMPTY` | Can hide the given streams from the list. |
+| `streams_image_size_height` | `string` | `4em` | Sets the size of the image. |
+| `streams_image_size_width` | `string` | `3em` | Sets the size of the image. |
+| `streams_image_type` | `string` | `user` | Values can be `user` and `stream`. The first one will be the profile picture of the user/streamer and the second one a screenshot of the stream. See `streams_show_image` to hide it |
 | `streams_limit_count` | `int` | `100` | Can be used to limit the number of streams that will be displayed. Values can be between `1` and `100`. |
-| `streams_padding_bottom_size` | `string` | `0em` |  |
-| `streams_padding_left_size` | `string` | `1em` |  |
-| `streams_padding_right_size` | `string` | `1em` |  |
-| `streams_padding_top_size` | `string` | `0em` |  |
-| `streams_reduce_requests` | `bool` | `true` |  |
-| `streams_show_game` | `bool` | `true` |  |
-| `streams_show_image` | `bool` | `true` |  |
-| `streams_show_title` | `bool` | `true` |  |
-| `streams_show_user_name` | `bool` | `true` |  |
-| `streams_show_viewers` | `bool` | `true` |  |
-| `streams_spacing_horivontal` | `string` | `1em` |  |
-| `streams_spacing_vertical` | `string` | `1em` |  |
-| `streams_title_height` | `string` | `1.2em` |  |
-| `streams_vip` | `list` | `EMPTY` |  |
+| `streams_padding_bottom_size` | `string` | `0em` | Sets the paddings of the steams. |
+| `streams_padding_left_size` | `string` | `1em` | Sets the paddings of the steams. |
+| `streams_padding_right_size` | `string` | `1em` | Sets the paddings of the steams. |
+| `streams_padding_top_size` | `string` | `0em` | Sets the paddings of the steams. |
+| `streams_reduce_requests` | `bool` | `true` | Reduces the requests to the Twitch APIs. May cause a little lag to the live data. Set it to `false` if data is to async to live. |
+| `streams_show_game` | `bool` | `true` | Shows or hides the name of the game. |
+| `streams_show_image` | `bool` | `true` | Shows or hides the image of the stream or the user. See `streams_image_type`. |
+| `streams_show_title` | `bool` | `true` | Shows or hides the title of the stream. The title could be really long. See `streams_title_height` to address that problem. |
+| `streams_show_user_name` | `bool` | `true` | Shows or hides the username of the streamer. May always be shown. |
+| `streams_show_viewers` | `bool` | `true` | Shows or hides the count of the viewers. |
+| `streams_spacing_horivontal` | `string` | `1em` | The spacing between the images and the details of the stream. |
+| `streams_spacing_vertical` | `string` | `1em` | The spacing between the streams. |
+| `streams_title_height` | `string` | `1.2em` | The height that is given to the stream title to cap its possible excessive length. |
+| `streams_vip` | `list` | `EMPTY` | Will show a golden `✭` in front of the user name of the streamer to mark it as an VIP/favorite. |
 
 
 ## Twitch add dev app
