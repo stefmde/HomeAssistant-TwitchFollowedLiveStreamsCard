@@ -81,6 +81,8 @@ class TwitchFollowedLiveStreamsCard extends HTMLElement
                 checkRequiredProperties();
                 await getCurrentUser();
                 let streams = await getJson(const_url_get_user_streams + currentUser[0].id);
+                printHeader(streams.length);
+
                 if(streams.length == priviousStreamCount || streams.length == 0 || !config_streams_reduce_requests) {
                     return;
                 }
@@ -88,9 +90,7 @@ class TwitchFollowedLiveStreamsCard extends HTMLElement
 
                 const streamers = await getStreamers(streams);
                 streams = sortStreams(streams, streamers);
-                printHeader(streams.length);
                 await printStreams(streams, streamers);
-                content.style.padding = "0em";
             }
 
             // ### Local Helpers
@@ -136,9 +136,9 @@ class TwitchFollowedLiveStreamsCard extends HTMLElement
                 if(config_global_show_header) {
                     const streamsCountDivH = document.createElement('h1');
                     streamsCountDivH.classList.add("card-header");
+                    streamsCountDivH.style.paddingTop = "0.7em";
                     streamsCountDivH.innerText = streamsCount + " streams live";
                     streamsCountDiv.innerHTML = streamsCountDivH.outerHTML;
-
                     content.innerHTML = streamsCountDiv.outerHTML;
                 }
             }
@@ -327,11 +327,16 @@ class TwitchFollowedLiveStreamsCard extends HTMLElement
                 if(config_global_debug) console.log("TwitchFollowedLiveStreamsCard: " + str);
             }
 
+            function printLoading() {
+                const loadingDiv = document.createElement('div');
+                loadingDiv.innerHTML = "Loading twitch streams...";
+                loadingDiv.style.padding = "1em";
+                content.innerHTML = loadingDiv.outerHTML;
+            }
+
             async function init() {
                 log("Loading streams...");
-            
-                content.innerHTML = "Loading twitch streams...<br><br>";
-                content.style.padding = "1em";
+                printLoading();
                 main();
                 if(!config_streams_disable_auto_refresh) {
                     setInterval(async () => {
