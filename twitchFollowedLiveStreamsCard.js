@@ -71,7 +71,7 @@ class TwitchFollowedLiveStreamsCard extends HTMLElement
             const config_streams_vip = this.config.streams_vip !== undefined ? this.config.streams_vip : [];
 
 
-            let priviousStreamCount = 0;
+            let priviousStreamCount = -1;
             let currentUser = null;
 
             // ### Functions
@@ -81,12 +81,12 @@ class TwitchFollowedLiveStreamsCard extends HTMLElement
                 checkRequiredProperties();
                 await getCurrentUser();
                 let streams = await getJson(const_url_get_user_streams + currentUser[0].id);
-                printHeader(streams.length);
 
-                if(streams.length == priviousStreamCount || streams.length == 0 || !config_streams_reduce_requests) {
+                if(streams.length == priviousStreamCount || !config_streams_reduce_requests) {
                     return;
                 }
                 priviousStreamCount = streams.length;
+                printHeader(streams.length);
 
                 const streamers = await getStreamers(streams);
                 streams = sortStreams(streams, streamers);

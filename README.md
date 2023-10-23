@@ -43,7 +43,7 @@ This card for HomeAssistant allows you to see all your favorite Twitch streamers
 | `streams_padding_left_size` | `string` | `1em` | Sets the paddings of the steams. |
 | `streams_padding_right_size` | `string` | `1em` | Sets the paddings of the steams. |
 | `streams_padding_top_size` | `string` | `0em` | Sets the paddings of the steams. |
-| `streams_reduce_requests` | `bool` | `true` | Reduces the requests to the Twitch APIs. May cause a little lag to the live data. Set it to `false` if data is to async to live. |
+| `streams_reduce_requests` | `bool` | `true` | Reduces the requests to the Twitch APIs and will reduce redrawing(flickering) on the Dashboard. May cause a little lag to the live data. Set it to `false` if data is to async to live. |
 | `streams_show_game` | `bool` | `true` | Shows or hides the name of the game. |
 | `streams_show_image` | `bool` | `true` | Shows or hides the image of the stream or the user. See `streams_image_type`. |
 | `streams_show_title` | `bool` | `true` | Shows or hides the title of the stream. The title could be really long. See `streams_title_height` to address that problem. |
