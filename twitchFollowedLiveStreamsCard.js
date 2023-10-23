@@ -136,7 +136,7 @@ class TwitchFollowedLiveStreamsCard extends HTMLElement
                 if(config_global_show_header) {
                     const streamsCountDivH = document.createElement('h1');
                     streamsCountDivH.classList.add("card-header");
-                    streamsCountDivH.style.paddingTop = "0.7em";
+                    streamsCountDivH.style.paddingTop = "0.8em";
                     streamsCountDivH.innerText = streamsCount + " streams live";
                     streamsCountDiv.innerHTML = streamsCountDivH.outerHTML;
                     content.innerHTML = streamsCountDiv.outerHTML;
