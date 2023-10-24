@@ -71,7 +71,8 @@ class TwitchFollowedLiveStreamsCard extends HTMLElement
             const config_streams_vip = this.config.streams_vip !== undefined ? this.config.streams_vip : [];
 
 
-            let priviousStreamCount = -1;
+            let previousStreamCount = -1;
+            let previousStreamDatas = [];
             let currentUser = null;
 
             // ### Functions
@@ -80,17 +81,18 @@ class TwitchFollowedLiveStreamsCard extends HTMLElement
             {
                 checkRequiredProperties();
                 await getCurrentUser();
-                let streams = await getJson(const_url_get_user_streams + currentUser[0].id);
+                const streams = await getJson(const_url_get_user_streams + currentUser[0].id);
 
-                if(streams.length == priviousStreamCount || !config_streams_reduce_requests) {
+                if(streams.length == previousStreamCount && config_streams_reduce_requests) {
                     return;
                 }
-                priviousStreamCount = streams.length;
                 printHeader(streams.length);
 
                 const streamers = await getStreamers(streams);
-                streams = sortStreams(streams, streamers);
-                await printStreams(streams, streamers);
+                const streamDatas = sortStreams(streams, streamers);
+                await printStreams(streamDatas);
+                previousStreamCount = streams.length;
+                previousStreamDatas = streamDatas;
             }
 
             // ### Local Helpers
@@ -151,57 +153,77 @@ class TwitchFollowedLiveStreamsCard extends HTMLElement
                 return await getJson(const_url_get_user + userQuery);
             }
 
-            function getStreamer(streamers, user_login) {
-                return streamers.find(obj => {
-                    return obj.login === user_login;
-                });
-            }
-
             function sortStreams(streams, streamers) {
-                let vipStreams = [];
-                let streamsStandard = [];
+                let vipStreamDatas = [];
+                let standardStreamDatas = [];
                 let skipped = 0;
+                let sortedStreamDatas = [];
 
                 streams.forEach((stream, index, arr) => {
                     const streamer = streamers.find(obj => {
                         return obj.login === stream.user_login;
                     });
+                    
+                    const streamData = getDataAsStreamData(stream, streamer);
 
-                    if(config_streams_vip.length > 0 && config_streams_show_vips_ontop && config_streams_vip.some((x) => x.toString().toLowerCase() == streamer.login)) {
-                        stream.isVip = true;
-                        vipStreams.push(stream);
+                    if(config_streams_vip.length > 0 && config_streams_show_vips_ontop && config_streams_vip.some((x) => x.toString().toLowerCase() == streamData.userLogin)) {
+                        streamData.isVip = true;
+                        vipStreamDatas.push(streamData);
                         return;
                     }
 
-                    if(config_streams_hide.length > 0 && config_streams_hide.some((x) => x.toString().toLowerCase() == streamer.login)) {
+                    if(config_streams_hide.length > 0 && config_streams_hide.some((x) => x.toString().toLowerCase() == streamData.userLogin)) {
                         skipped++;
                         return;
                     }
 
-                    streamsStandard.push(stream);
+                    standardStreamDatas.push(streamData);
                 });
 
                 log(skipped + " twitch streams hidden due to the 'streams_hide' setting");
-                vipStreams = sortStreamsByViewerCount(vipStreams);
-                streamsStandard = sortStreamsByViewerCount(streamsStandard);
-                const sortedStreams = vipStreams.concat(streamsStandard);
+                vipStreamDatas = sortStreamsByViewerCount(vipStreamDatas);
+                standardStreamDatas = sortStreamsByViewerCount(standardStreamDatas);
+                sortedStreamDatas = vipStreamDatas.concat(standardStreamDatas);
                 log("Sorted streams");
-                if(config_global_debug) console.log(sortedStreams);
-                return sortedStreams;
+                if(config_global_debug) console.log(sortedStreamDatas);
+                return sortedStreamDatas;
             }
 
-            function sortStreamsByViewerCount(streams) {
-                return streams.sort(function(a, b) {
-                    return a.viewer_counta - b.viewer_counta;
+            function getDataAsStreamData(stream, streamer) {
+                const streamData = new StreamData;
+
+                streamData.isVip = false;
+
+                streamData.userId = streamer.id;
+                streamData.userLogin = streamer.login;
+                streamData.userDisplayName = streamer.display_name;
+                streamData.userProfileImage = streamer.profile_image_url;
+                streamData.userBroadcasterType = streamer.broadcaster_type;
+
+                streamData.streamId = stream.id;
+                streamData.streamGameName = stream.game_name;
+                streamData.streamImage = stream.thumbnail_url.replace("{width}","300").replace("{height}","400");
+                streamData.streamIsMature = stream.is_mature;
+                streamData.streamLanguage = stream.language;
+                streamData.streamTags = stream.tags;
+                streamData.streamStartedAtUtc = stream.started_at;
+                streamData.streamViewerCount = stream.viewer_count;
+                streamData.streamTitle = stream.title;
+
+                return streamData;
+            }
+
+            function sortStreamsByViewerCount(streamDatas) {
+                return streamDatas.sort(function(a, b) {
+                    return a.streamViewerCount - b.streamViewerCount;
                   });
             }
 
-            async function printStreams(streams, streamers) {
+            async function printStreams(streamDatas) {
                 const streamsTable = document.createElement('table');
-                for (let i = 0; i < streams.length && i < config_streams_limit_count; i++) {
-                    const stream = streams[i];
-                    const streamer = getStreamer(streamers, stream.user_login);
-                    const streamContent = await printStream(stream, streamer);
+                for (let i = 0; i < streamDatas.length && i < config_streams_limit_count; i++) {
+                    const streamData = streamDatas[i];
+                    const streamContent = await printStream(streamData);
                     streamsTable.innerHTML += streamContent;
                 }
 
@@ -209,10 +231,10 @@ class TwitchFollowedLiveStreamsCard extends HTMLElement
                 content.innerHTML += streamsDiv.outerHTML;
             }
 
-            async function printStream(stream, streamer) {
+            async function printStream(streamData) {
                 const streamContainerTr = document.createElement('tr');
                 if(!config_streams_disable_click_to_view) {
-                    streamContainerTr.setAttribute("onClick", "window.open('https://www.twitch.tv/" + stream.user_login + "')");
+                    streamContainerTr.setAttribute("onClick", "window.open('https://www.twitch.tv/" + streamData.userLogin + "')");
                     streamContainerTr.style.cursor = "pointer";
                 }
                 streamContainerTr.style.marginTop = "1.2em!important";
@@ -230,14 +252,11 @@ class TwitchFollowedLiveStreamsCard extends HTMLElement
                     streamImageTdImg.style.paddingRight = config_streams_spacing_horivontal;
 
                     if(config_streams_image_type === "user") {
-                        streamImageTdImg.setAttribute("src", streamer.profile_image_url);
+                        streamImageTdImg.setAttribute("src", streamData.userProfileImage);
                     }
 
                     if(config_streams_image_type === "stream") {
-                        let url = stream.thumbnail_url;
-                        url = url.replace("{height}", "400");
-                        url = url.replace("{width}", "300");
-                        streamImageTdImg.setAttribute("src", url);
+                        streamImageTdImg.setAttribute("src", streamData.streamImage);
                     }
                     
                     streamImageTd.innerHTML = streamImageTdImg.outerHTML;
@@ -253,7 +272,7 @@ class TwitchFollowedLiveStreamsCard extends HTMLElement
                 if(config_streams_show_game) {
                     let streamDetailsGameNameDiv = document.createElement("div");
                     streamDetailsGameNameDiv.style.fontSize = config_streams_font_size_game;
-                    streamDetailsGameNameDiv.innerText = stream.game_name;
+                    streamDetailsGameNameDiv.innerText = streamData.streamGameName;
                     streamDetailsTd.innerHTML += streamDetailsGameNameDiv.outerHTML;
                 }
 
@@ -262,7 +281,7 @@ class TwitchFollowedLiveStreamsCard extends HTMLElement
                     streamDetailsUserNameDiv.style.fontWeight = "bold";
                     streamDetailsUserNameDiv.style.fontSize = config_streams_font_size_user_name;
 
-                    if(stream.isVip) {
+                    if(streamData.isVip) {
                         let streamDetailsUserNameDivVipSpan = document.createElement("span");
                         streamDetailsUserNameDivVipSpan.innerHTML = "✭&nbsp;";
                         streamDetailsUserNameDivVipSpan.style.color = getColorFromTemplate("--primary-color");
@@ -270,7 +289,7 @@ class TwitchFollowedLiveStreamsCard extends HTMLElement
                     }
 
                     let streamDetailsUserNameDivUserNameSpan = document.createElement("span");
-                    streamDetailsUserNameDivUserNameSpan.innerText = stream.user_name;
+                    streamDetailsUserNameDivUserNameSpan.innerText = streamData.userDisplayName;
                     streamDetailsUserNameDiv.innerHTML += streamDetailsUserNameDivUserNameSpan.outerHTML;
 
                     streamDetailsTd.innerHTML += streamDetailsUserNameDiv.outerHTML;
@@ -287,7 +306,7 @@ class TwitchFollowedLiveStreamsCard extends HTMLElement
                     streamDetailsViewerCountDiv.innerHTML += streamDetailsViewerCountDivIconSpan.outerHTML;
     
                     const streamDetailsViewerCountDivCountSpan = document.createElement("span");
-                    streamDetailsViewerCountDivCountSpan.innerHTML = dimTextAsSpan(stream.viewer_count + " viewers", config_streams_viewers_visibility_percentage);
+                    streamDetailsViewerCountDivCountSpan.innerHTML = dimTextAsSpan(streamData.streamViewerCount + " viewers", config_streams_viewers_visibility_percentage);
                     streamDetailsViewerCountDiv.innerHTML += streamDetailsViewerCountDivCountSpan.outerHTML;
                     streamDetailsTd.innerHTML += streamDetailsViewerCountDiv.outerHTML;
                 }
@@ -297,7 +316,7 @@ class TwitchFollowedLiveStreamsCard extends HTMLElement
                     streamDetailsTitleDiv.style.height = config_streams_title_height;
                     streamDetailsTitleDiv.style.fontSize = config_streams_font_size_title;
                     streamDetailsTitleDiv.style.overflow = "hidden";
-                    streamDetailsTitleDiv.innerText = stream.title;
+                    streamDetailsTitleDiv.innerText = streamData.streamTitle;
                     streamDetailsTd.innerHTML += streamDetailsTitleDiv.outerHTML;
                 }
 
@@ -360,6 +379,28 @@ class TwitchFollowedLiveStreamsCard extends HTMLElement
 }
 
 customElements.define('twitch-followed-live-streams-card', TwitchFollowedLiveStreamsCard);
+
+class StreamData {
+    isVip;
+
+    // https://dev.twitch.tv/docs/api/reference/#get-users
+    userId;
+    userLogin;
+    userDisplayName;
+    userProfileImage;
+    userBroadcasterType;
+
+    // https://dev.twitch.tv/docs/api/reference/#get-followed-streams
+    streamId;
+    streamGameName;
+    streamTitle;
+    streamViewerCount;
+    streamStartedAtUtc;
+    streamLanguage; // https://help.twitch.tv/s/article/languages-on-twitch#streamlang
+    streamImage;
+    streamTags;
+    streamIsMature;
+}
 
 /*
 # CONFIG
