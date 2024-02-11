@@ -27,15 +27,8 @@ class TwitchFollowedLiveStreamsCard extends HTMLElement
             streamsDiv.style.paddingTop = this.config.streams_padding_top_size !== undefined ? this.config.streams_padding_top_size : "0em";
             streamsDiv.style.paddingBottom = this.config.streams_padding_bottom_size !== undefined ? this.config.streams_padding_bottom_size : "0em";
 
-            // ### Constants
-            const const_url_get_user = "https://api.twitch.tv/helix/users?";
-            const const_url_get_user_streams = "https://api.twitch.tv/helix/streams/followed?user_id=";
-
             // ### Get Config
             // Global
-            const config_global_credentials_access_token = this.config.global_credentials_access_token !== undefined ? this.config.global_credentials_access_token : null;
-            const config_global_credentials_client_id = this.config.global_credentials_client_id !== undefined ? this.config.global_credentials_client_id : null;
-            const config_global_credentials_user_name = this.config.global_credentials_user_name !== undefined ? this.config.global_credentials_user_name : null;
             const config_global_debug = this.config.global_debug !== undefined ? this.config.global_debug : false;
             const config_global_show_header = this.config.global_show_header !== undefined ? this.config.global_show_header : true;
             const config_global_update_interval_s = this.config.global_update_interval_s !== undefined ? this.config.global_update_interval_s * 1000 : 60 * 1000;
@@ -52,7 +45,6 @@ class TwitchFollowedLiveStreamsCard extends HTMLElement
             const config_streams_hide = this.config.streams_hide !== undefined ? this.config.streams_hide : [];
             const config_streams_image_size_height = this.config.streams_image_size_height !== undefined ? this.config.streams_image_size_height : "4em";
             const config_streams_image_size_width = this.config.streams_image_size_width !== undefined ? this.config.streams_image_size_width : "3em";
-            const config_streams_image_type = this.config.streams_image_type !== undefined ? this.config.streams_image_type : "user";
             const config_streams_limit_count = this.config.streams_limit_count !== undefined ? this.config.streams_limit_count : 100;
             const config_streams_reduce_requests = this.config.streams_reduce_requests !== undefined ? this.config.streams_reduce_requests : true;
             
@@ -80,16 +72,14 @@ class TwitchFollowedLiveStreamsCard extends HTMLElement
             async function main()
             {
                 checkRequiredProperties();
-                await getCurrentUser();
-                const streams = await getJson(const_url_get_user_streams + currentUser[0].id);
+                const streams = getStreams();
 
                 if(streams.length == previousStreamCount && config_streams_reduce_requests) {
                     return;
                 }
                 printHeader(streams.length);
 
-                const streamers = await getStreamers(streams);
-                const streamDatas = sortStreams(streams, streamers);
+                const streamDatas = sortStreams(streams);
                 await printStreams(streamDatas);
                 previousStreamCount = streams.length;
                 previousStreamDatas = streamDatas;
@@ -97,42 +87,36 @@ class TwitchFollowedLiveStreamsCard extends HTMLElement
 
             // ### Local Helpers
             function checkRequiredProperties() {
-                if(config_global_credentials_user_name == null) {
-                    console.error("TwitchFollowedLiveStreamsCard: Property 'global_credentials_user_name' is required and not set.");
-                }
-                if(config_global_credentials_access_token == null) {
-                    console.error("TwitchFollowedLiveStreamsCard: Property 'global_credentials_access_token' is required and not set.");
-                }
-                if(config_global_credentials_client_id == null) {
-                    console.error("TwitchFollowedLiveStreamsCard: Property 'global_credentials_client_id' is required and not set.");
+                if(!hass.config.components.includes("twitch")) {
+                    console.error("Missing integration: https://www.home-assistant.io/integrations/twitch/ or as button: https://my.home-assistant.io/redirect/config_flow_start?domain=twitch");
                 }
             }
 
-            async function getJson(url) {
-                log("Get json from url '" + url + "'");
-                let json_data = await fetch(url, {
-                    headers: {
-                        Accept: 'application/json',
-                        Authorization: 'Bearer ' + config_global_credentials_access_token,
-                        'Client-Id': config_global_credentials_client_id
+            function getStreams() {
+                const entityKeys = [];
+                Object.keys(hass.entities).forEach(x => {
+                    if(hass.entities[x].platform === 'twitch') {
+                        entityKeys.push(hass.entities[x].entity_id);
                     }
-                    })
-                    .then(resp => resp.json())
-                    .then(json => {
-                        log("Json result raw:");
-                        if(config_global_debug) console.log(json);
-                        log("Json result processed:");
-                        if(config_global_debug) console.log(JSON.parse(JSON.stringify(json.data)));
-                        return JSON.parse(JSON.stringify(json.data));
-                    });
-                return json_data;
+                });
+
+                const entitiesAll = [];
+                Object.keys(hass.states).forEach(x => {
+                    if(entityKeys.includes(x)) {
+                        entitiesAll.push(hass.states[x]);
+                    }
+                });
+
+                const entitiesOnline = [];
+                entitiesAll.forEach(x => {
+                    if(x.state === "streaming" ) {
+                        entitiesOnline.push(x);
+                    }
+                });
+
+                return entitiesOnline;
             }
 
-            async function getCurrentUser() {
-                if(currentUser == null || !config_streams_reduce_requests) {
-                    currentUser = await getJson(const_url_get_user + "login=" + config_global_credentials_user_name);
-                }
-            }
 
             function printHeader(streamsCount) {
                 if(config_global_show_header) {
@@ -145,34 +129,22 @@ class TwitchFollowedLiveStreamsCard extends HTMLElement
                 }
             }
 
-            async function getStreamers(streams) {
-                let userQuery = "";
-                for (let i = 0; i < streams.length; i++) {
-                    userQuery += "login=" + streams[i].user_login + "&"
-                }
-                return await getJson(const_url_get_user + userQuery);
-            }
-
-            function sortStreams(streams, streamers) {
+            function sortStreams(streams) {
                 let vipStreamDatas = [];
                 let standardStreamDatas = [];
                 let skipped = 0;
                 let sortedStreamDatas = [];
 
                 streams.forEach((stream, index, arr) => {
-                    const streamer = streamers.find(obj => {
-                        return obj.login === stream.user_login;
-                    });
-                    
-                    const streamData = getDataAsStreamData(stream, streamer);
+                    const streamData = getDataAsStreamData(stream);
 
-                    if(config_streams_vip.length > 0 && config_streams_show_vips_ontop && config_streams_vip.some((x) => x.toString().toLowerCase() == streamData.userLogin)) {
+                    if(config_streams_vip.length > 0 && config_streams_show_vips_ontop && config_streams_vip.some((x) => x.toString().toLowerCase() == streamData.userDisplayName.toLowerCase())) {
                         streamData.isVip = true;
                         vipStreamDatas.push(streamData);
                         return;
                     }
 
-                    if(config_streams_hide.length > 0 && config_streams_hide.some((x) => x.toString().toLowerCase() == streamData.userLogin)) {
+                    if(config_streams_hide.length > 0 && config_streams_hide.some((x) => x.toString().toLowerCase() == streamData.userDisplayName.toLowerCase())) {
                         skipped++;
                         return;
                     }
@@ -189,26 +161,16 @@ class TwitchFollowedLiveStreamsCard extends HTMLElement
                 return sortedStreamDatas;
             }
 
-            function getDataAsStreamData(stream, streamer) {
+            function getDataAsStreamData(stream) {
                 const streamData = new StreamData;
 
                 streamData.isVip = false;
+                streamData.userDisplayName = stream.attributes.friendly_name;
 
-                streamData.userId = streamer.id;
-                streamData.userLogin = streamer.login;
-                streamData.userDisplayName = streamer.display_name;
-                streamData.userProfileImage = streamer.profile_image_url;
-                streamData.userBroadcasterType = streamer.broadcaster_type;
-
-                streamData.streamId = stream.id;
-                streamData.streamGameName = stream.game_name;
-                streamData.streamImage = stream.thumbnail_url.replace("{width}","300").replace("{height}","400");
-                streamData.streamIsMature = stream.is_mature;
-                streamData.streamLanguage = stream.language;
-                streamData.streamTags = stream.tags;
-                streamData.streamStartedAtUtc = stream.started_at;
-                streamData.streamViewerCount = stream.viewer_count;
-                streamData.streamTitle = stream.title;
+                streamData.streamGameName = stream.attributes.game;
+                streamData.streamImage = stream.attributes.entity_picture.replace("24x24.jpg","300x400.jpg");
+                streamData.streamViewerCount = stream.attributes.views;
+                streamData.streamTitle = stream.attributes.title;
 
                 return streamData;
             }
@@ -234,7 +196,7 @@ class TwitchFollowedLiveStreamsCard extends HTMLElement
             async function printStream(streamData) {
                 const streamContainerTr = document.createElement('tr');
                 if(!config_streams_disable_click_to_view) {
-                    streamContainerTr.setAttribute("onClick", "window.open('https://www.twitch.tv/" + streamData.userLogin + "')");
+                    streamContainerTr.setAttribute("onClick", "window.open('https://www.twitch.tv/" + streamData.userDisplayName + "')");
                     streamContainerTr.style.cursor = "pointer";
                 }
                 streamContainerTr.style.marginTop = "1.2em!important";
@@ -250,14 +212,7 @@ class TwitchFollowedLiveStreamsCard extends HTMLElement
                     streamImageTdImg.style.height = config_streams_image_size_height;
                     streamImageTdImg.style.width = config_streams_image_size_width;
                     streamImageTdImg.style.paddingRight = config_streams_spacing_horivontal;
-
-                    if(config_streams_image_type === "user") {
-                        streamImageTdImg.setAttribute("src", streamData.userProfileImage);
-                    }
-
-                    if(config_streams_image_type === "stream") {
-                        streamImageTdImg.setAttribute("src", streamData.streamImage);
-                    }
+                    streamImageTdImg.setAttribute("src", streamData.streamImage);
                     
                     streamImageTd.innerHTML = streamImageTdImg.outerHTML;
                     streamContainerTr.innerHTML += streamImageTd.outerHTML;
@@ -378,28 +333,16 @@ class TwitchFollowedLiveStreamsCard extends HTMLElement
     }
 }
 
-customElements.define('twitch-followed-live-streams-card', TwitchFollowedLiveStreamsCard);
+customElements.define('twitch-followed-live-streams-card', TwitchFollowedLiveStreamsLiteCard);
 
 class StreamData {
     isVip;
-
-    // https://dev.twitch.tv/docs/api/reference/#get-users
-    userId;
-    userLogin;
     userDisplayName;
-    userProfileImage;
-    userBroadcasterType;
 
-    // https://dev.twitch.tv/docs/api/reference/#get-followed-streams
-    streamId;
     streamGameName;
     streamTitle;
     streamViewerCount;
-    streamStartedAtUtc;
-    streamLanguage; // https://help.twitch.tv/s/article/languages-on-twitch#streamlang
     streamImage;
-    streamTags;
-    streamIsMature;
 }
 
 /*
@@ -408,9 +351,6 @@ class StreamData {
 GLOBAL
 global_debug
 global_update_interval_s
-global_credentials_user_name
-global_credentials_access_token
-global_credentials_client_id
 global_show_header
 
 STREAMS
