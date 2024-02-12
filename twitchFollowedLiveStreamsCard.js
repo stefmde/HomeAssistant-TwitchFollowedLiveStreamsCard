@@ -333,7 +333,7 @@ class TwitchFollowedLiveStreamsCard extends HTMLElement
     }
 }
 
-customElements.define('twitch-followed-live-streams-card', TwitchFollowedLiveStreamsLiteCard);
+customElements.define('twitch-followed-live-streams-card', TwitchFollowedLiveStreamsCard);
 
 class StreamData {
     isVip;
